@@ -1,0 +1,46 @@
+/*начало секции подключаемых пространств имен*/
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Windows.Forms;
+using System.IO;
+/*конец секции подключаемых пространств имен*/
+namespace Словарь /*объявление нового пространства имен*/
+{public partial class DictionaryForm : Form /* Создаем форму с название « DictionaryForm »*/
+{#region Переменные.
+ToolTip toolTip = new ToolTip(); /* элемент управления формы */
+List<string> textToolTip = new List<string>()
+{"Добавить в словарь.", "Просмотр словаря.", "Перевести слово.", "Выбор языка перевода."}; /*Добавление списка, что бы выбрать язык для перевода*/
+List<string> ruLang = new List<string>(); /* Добавление списка с русскими словами */
+List<string> enLang = new List<string>(); /* Добавление списка с английскими словами */
+ #endregion /* справочник по C# */
+ #region Инициализация программы.
+ public DictionaryForm()
+{InitializeComponent();} /* Метод InitializeComponent содержит код, который создает и инициализирует объекты пользовательского интерфейса*/
+private void DictionaryForm_Load(object sender, EventArgs e)
+{langComboBox.SelectedIndex = 0; /* Индекс текущего выделенного элемента (индексация ведется с нуля).*/
+ruLang.AddRange(File.ReadAllLines("ru.txt")); /* Открывает текстовый файл «ru.txt», считывает все строки файла в массив строк и затем закрывает файл.*/
+enLang.AddRange(File.ReadAllLines("en.txt"));}/* Открывает текстовый файл «en.txt», считывает все строки файла в массив строк и затем закрывает файл.*/
+#endregion
+#region Добавляем слово в словарь.
+private void AddButton_Click(object sender, EventArgs e)
+{NewWord newWord = new NewWord(); /* Объявляем новую переменную под название «newWord», что означает новое слово. New применяется для создания объектов и вызова конструктора. */
+if (newWord.AddWord() == DialogResult.OK & newWord.wordTextBox.Text != "" & newWord.translateTextBox.Text != "") /* Условие, проверки на равенство, если вы хотите сохранить слово с переводом, для того что бы сохранить полученный результат после нажатия копки, создаем переменную класса «DialogResult», со значение «ОК» и текстовое поле заполнено текстом, т.е. новое слово с переводом. А так же условие, проверки на неравенство, пустое поле и текстовое поле с переводом нового слова. */
+{ruLang.Add(newWord.wordTextBox.Text); /*Контекстное ключевое слово add определяет метод доступа настраиваемого события, который вызывается, когда клиентский код подписывается на события. Добавление в текстовое поле слово. */
+enLang.Add(newWord.translateTextBox.Text); /*Контекстное ключевое слово add определяет метод доступа настраиваемого события, который вызывается, когда клиентский код подписывается на события. Добавление в текстовое поле слово с переводом. */
+File.WriteAllLines("ru.txt", ruLang); /* Записывает новые слова в текстовый файл «ru.txt»*/
+File.WriteAllLines("en.txt", enLang);}} /* Записывает новые слова в текстовый файл «en.txt»*/
+#endregion
+#region Отображаем словарь.
+private void viewDictionaryButton_Click(object sender, EventArgs e)
+{ViewDictionary viewDictionary = new ViewDictionary();} /* Объявляем новую переменную под название «newWord», что означает новое слово. New применяется для создания объектов и вызова конструктора. */
+#endregion
+#region Переводим слово.
+private void translateButton_Click(object sender, EventArgs e)
+{translateTextBox.Text = null; /* Текстовое поле для перевода слова приравнивается к литералу null представляющим пустую ссылку, которая не ссылается на объект.*/
+Translate tanslate = new Translate(wordTextBox.Text, translateTextBox, langComboBox.SelectedIndex);} /* Объявляем новую переменную под название «newWord», что означает новое слово. New применяется для создания объектов и вызова конструктора. К этой переменной так же привязываем текстовое поле с веденым словом, которое надо перевести и текстовое поле с переводом этого слова, а так же список с выбором языка перевода.*/
+#endregion{}}}
